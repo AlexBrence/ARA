@@ -73,12 +73,13 @@ int countingSort(vector<int> A, int *B) {
         C[i] = C[i] + C[i-1];
     }
 
-
+    // Fill B array
     for (int i = A.size()-1; i >= 0; i--) {
         B[C[A[i]]-1] = A[i];
         C[A[i]]--;
     }
 
+    // Add min
     if (min < 0) {
         for (int i = 0; i < A.size()-1; i++) {
             B[i] += min;
@@ -89,6 +90,71 @@ int countingSort(vector<int> A, int *B) {
     delete[] C;
 
     return *B;
+}
+
+int romanSort(vector<int> A, int *B) {
+    int min = 0;
+    int MAX = 0;
+    int index = 0;
+
+    // Go through numbers, always save the smallest one
+    for (int i : A) {
+        if (i < min) {
+            min = i;
+        }
+    }
+
+    // If min < 0, go through numbers and add min to them
+    if (min < 0) {
+        for (int & i : A) {
+            i -= min;
+        }
+    }
+
+    // Look for the max element
+    for (int i : A) {
+        if (i > MAX) {
+            MAX = i;
+        }
+    }
+
+    int *C = new int[MAX+1];
+
+    // Make all elt in C = 0
+    for (int i = 0; i <= MAX; i++) {
+        C[i] = 0;
+    }
+
+
+    // For A value make C index++
+    for (int i : A) {
+        C[i]++;
+    }
+
+    // Go through C, every non-zero value from C[i] puts i to B
+    for (int i = 0; i < MAX+1; i++) {
+        if (C[i] == 0) continue;
+
+        else if (C[i] > 1) {
+            for (int j = 0; j < C[i]; j++) {
+                B[index] = i;
+                index++;
+            }
+        }
+        else {
+            B[index] = C[i] * i;
+            index++;
+        }
+    }
+
+    for (int i = 0; i < A.size()-1; i++) {
+        B[i] += min;
+    }
+
+    delete[] C;
+
+    return *B;
+
 }
 
 
@@ -103,7 +169,7 @@ int main(int argc, const char* argv[]) {
 	    countingSort(A, B);
 	}
 	else {
-		//Roman sort
+		romanSort(A, B);
 	}
 	Izpis_Stevil(B, A.size());
 
